@@ -41,9 +41,9 @@ module uart_rx #(
     logic start_detect;
     assign start_detect = rx_sync_d1 & ~rx_sync;
 
-    logic [3:0]            rx_sample_count; 
-    logic [2:0]            data_bit_count; 
-    logic [DATA_WIDTH-1:0] rx_shift_reg;  
+    logic [3:0]                         rx_sample_count; 
+    logic [$clog2(DATA_WIDTH) - 1:0]    data_bit_count; 
+    logic [DATA_WIDTH-1:0]              rx_shift_reg;  
 
     logic parity_expected;
     assign parity_expected = PARITY_IS_EVEN ? (^rx_shift_reg) : ~(^rx_shift_reg);

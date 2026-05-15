@@ -116,8 +116,7 @@ module uart_controller #(
 
 
                 S_WAIT: begin
-                    if (tx_start) begin
-                    end else if (!tx_busy) begin
+                    if (!tx_busy) begin
                         tx_ctrl_state <= S_IDLE;
                     end
                 end
