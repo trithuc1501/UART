@@ -22,6 +22,8 @@ interface uart_if#(
     logic fifo_wen;
     logic fifo_ren;
 
+    logic tx_start;
+
     clocking drv_cb @(posedge i_clk);
         default input #1ns output #1ns;
         output i_rx_serial;
@@ -72,5 +74,37 @@ interface uart_if#(
 
     A_FULL_STABLE : assert property(p_full_stable) 
                     else $error("[SVA] ERROR: FULL flag deasserted without any Read command!");
+    
+    property p_no_fifo_overflow;
+        @(posedge i_clk) disable iff (!i_reset_n)
+        o_fifo_full |-> !fifo_wen;
+    endproperty
+
+    A_NO_FIFO_OVERFLOW: assert property(p_no_fifo_overflow)
+        else $error("[SVA] OVERFLOW: Attempted to write (fifo_wen=1) while FIFO is FULL!");
+
+    property p_no_fifo_underflow;
+        @(posedge i_clk) disable iff (!i_reset_n)
+        o_fifo_empty |-> !fifo_ren;
+    endproperty
+
+    A_NO_FIFO_UNDERFLOW: assert property(p_no_fifo_underflow)
+        else $error("[SVA] UNDERFLOW: Attempted to read (fifo_ren=1) while FIFO is EMPTY!");
+
+    property p_tx_handshake_start;
+        @(posedge i_clk) disable iff (!i_reset_n)
+        $rose(tx_start) |-> ##[1:2] $rose(o_tx_busy);
+    endproperty
+
+    A_TX_HANDSHAKE: assert property(p_tx_handshake_start)
+        else $error("[SVA] DEADLOCK: tx_start triggered but o_tx_busy did not respond!");
+
+    property p_tx_busy_min_width;
+        @(posedge i_clk) disable iff (!i_reset_n)
+        $rose(o_tx_busy) |=> o_tx_busy;
+    endproperty
+    
+    A_TX_BUSY_GLITCH: assert property(p_tx_busy_min_width)
+        else $error("[SVA] FSM ERROR: o_tx_busy deasserted too quickly (glitch detected)!");
 
 endinterface
