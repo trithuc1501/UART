@@ -73,7 +73,7 @@ module uart_controller #(
     assign o_fifo_empty = fifo_empty;
 
     typedef enum logic [1:0] {
-        S_IDLE = 2'd0,h
+        S_IDLE = 2'd0,
         S_READ = 2'd1,  
         S_LOAD = 2'd2, 
         S_WAIT = 2'd3   
