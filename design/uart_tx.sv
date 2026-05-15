@@ -131,5 +131,4 @@ module uart_tx #(
             endcase
         end
     end
-    
 endmodule
