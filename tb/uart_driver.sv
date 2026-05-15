@@ -10,7 +10,7 @@ class uart_driver extends uvm_driver #(uart_transaction);
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(virtual uart_if)::get(this, "", "vif", vif)) begin
-            `uvm_fatal("NO_VIF", "Không thể lấy virtual interface cho uart_driver")
+            `uvm_fatal("NO_VIF", "Failed to get virtual interface for uart_driver")
         end
     endfunction
 
@@ -30,7 +30,7 @@ class uart_driver extends uvm_driver #(uart_transaction);
 
         repeat(tr.delay_before_send) @(vif.drv_cb);
 
-        `uvm_info("DRV", $sformatf("Đang gửi byte: 0x%0h (Parity Err: %0b, Framing Err: %0b)", 
+        `uvm_info("DRV", $sformatf("Transmitting byte: 0x%0h (Parity Err: %0b, Framing Err: %0b)", 
                   tr.data, tr.inject_parity_error, tr.inject_framing_error), UVM_LOW)
 
         vif.drv_cb.i_rx_serial <= 1'b0;

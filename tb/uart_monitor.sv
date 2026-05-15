@@ -15,7 +15,7 @@ class uart_monitor extends uvm_monitor;
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         if (!uvm_config_db#(virtual uart_if)::get(this, "", "vif", vif)) begin
-            `uvm_fatal("MON_NOVIF", "Không thể lấy virtual interface cho monitor")
+            `uvm_fatal("MON_NOVIF", "Failed to get virtual interface for monitor")
         end
     endfunction
 
@@ -44,7 +44,7 @@ class uart_monitor extends uvm_monitor;
         current_bit = (is_tx_monitor) ? vif.mon_cb.o_tx_serial : vif.mon_cb.i_rx_serial;
         
         if (current_bit !== 1'b0) begin
-            `uvm_info("MON", "Phát hiện nhiễu (Glitch) trên Start bit, bỏ qua frame.", UVM_HIGH)
+            `uvm_info("MON", "Detected a glitch on the start bit, ignoring the frame.", UVM_HIGH)
             return;
         end
 
@@ -63,21 +63,24 @@ class uart_monitor extends uvm_monitor;
             
             if (current_bit !== expected_parity) begin
                 tr.parity_error_detected = 1;
-                `uvm_warning("MON", $sformatf("Lỗi Parity! Nhận: %b, Mong đợi: %b", current_bit, expected_parity))
+                `uvm_info("MON", $sformatf("Parity mismatch detected: got %b, expected %b",
+                          current_bit, expected_parity), UVM_MEDIUM)
             end
         end
 
         repeat(clks_per_bit) @(vif.mon_cb);
         current_bit = (is_tx_monitor) ? vif.mon_cb.o_tx_serial : vif.mon_cb.i_rx_serial;
-        
+
         if (current_bit !== 1'b1) begin
             tr.framing_error_detected = 1;
-            `uvm_error("MON", "Lỗi Framing! Stop bit không phải mức cao (1).")
+            `uvm_info("MON", "Framing mismatch detected: stop bit is not high (1).", UVM_MEDIUM)
         end
+        
+        tr.o_fifo_full = vif.mon_cb.o_fifo_full;
 
         item_collected_port.write(tr);
         
-        `uvm_info("MON", $sformatf("%s giải mã xong: 0x%0h", 
+        `uvm_info("MON", $sformatf("%s decoded successfully: 0x%0h", 
                   (is_tx_monitor ? "TX" : "RX"), tr.data), UVM_MEDIUM)
     endtask
 

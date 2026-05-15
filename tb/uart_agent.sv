@@ -13,7 +13,7 @@ class uart_agent extends uvm_agent;
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
-        uvm_config_db#(bit)::get(this, "", "is_tx_agent", is_tx_agent);
+        void'(uvm_config_db#(bit)::get(this, "", "is_tx_agent", is_tx_agent));
 
         if (is_tx_agent == 1) begin
             is_active = UVM_PASSIVE;

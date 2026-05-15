@@ -50,7 +50,7 @@ interface uart_if#(
     modport MON (clocking mon_cb, input i_clk, i_reset_n);
       
     property p_mutex_flags;
-      @(posedge clk) disable iff (!i_reset_n)
+      @(posedge i_clk) disable iff (!i_reset_n)
       !(o_fifo_full && o_fifo_empty);
     endproperty
 
@@ -58,7 +58,7 @@ interface uart_if#(
                     else $fatal(1, "[SVA] FATAL ERROR: FIFO is both FULL and EMPTY at the same time!");
 
     property p_empty_stable;
-      @(posedge clk) disable iff (!i_reset_n)
+      @(posedge i_clk) disable iff (!i_reset_n)
       (o_fifo_empty && !fifo_wen) |=> o_fifo_empty;
     endproperty
 
@@ -66,7 +66,7 @@ interface uart_if#(
                     else $error("[SVA] ERROR: EMPTY flag deasserted without any Write command!");
 
     property p_full_stable;
-      @(posedge clk) disable iff (!i_reset_n)
+      @(posedge i_clk) disable iff (!i_reset_n)
       (o_fifo_full && !fifo_ren) |=> o_fifo_full;
     endproperty
 

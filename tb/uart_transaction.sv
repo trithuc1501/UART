@@ -1,7 +1,8 @@
 class uart_transaction extends uvm_sequence_item;
     rand logic [7:0] data;                 
     rand bit inject_parity_error; 
-    rand bit inject_framing_error; 
+    rand bit inject_framing_error;
+    logic o_fifo_full; 
     
     rand int delay_before_send;   
 
@@ -15,6 +16,7 @@ class uart_transaction extends uvm_sequence_item;
         `uvm_field_int(delay_before_send, UVM_ALL_ON | UVM_DEC)
         `uvm_field_int(parity_error_detected, UVM_ALL_ON)
         `uvm_field_int(framing_error_detected, UVM_ALL_ON)
+        `uvm_field_int(o_fifo_full, UVM_ALL_ON)
     `uvm_object_utils_end
 
     function new(string name = "uart_transaction");
