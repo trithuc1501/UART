@@ -36,6 +36,7 @@ module fifo_sync #(
     end
 
     assign empty = (r_ptr == w_ptr);
-    assign full = (r_ptr[Depth_log] != w_ptr[Depth_log]);
+    assign full = (r_ptr[Depth_log] != w_ptr[Depth_log]) && 
+              (r_ptr[Depth_log-1:0] == w_ptr[Depth_log-1:0]);
 
 endmodule
