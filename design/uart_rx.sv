@@ -52,7 +52,7 @@ module uart_rx #(
         if (!i_reset_n) begin
             rx_state        <= S_IDLE;
             rx_sample_count <= 4'd0;
-            data_bit_count  <= 3'd0;
+            data_bit_count  <= '0;
             rx_shift_reg    <= '0;
             o_data_parallel <= '0;
             o_data_valid    <= 1'b0;
@@ -80,7 +80,7 @@ module uart_rx #(
                         if (rx_sample_count == 4'd7) begin
                             rx_sample_count <= 4'd0;
                             if (rx_sync == 1'b0) begin
-                                data_bit_count <= 3'd0;
+                                data_bit_count <= '0;
                                 rx_state       <= S_DATA_BITS;
                             end else begin
                                 rx_state <= S_IDLE;
@@ -96,8 +96,8 @@ module uart_rx #(
                             rx_sample_count <= 4'd0;
                             rx_shift_reg <= {rx_sync, rx_shift_reg[DATA_WIDTH-1:1]};
 
-                            if (data_bit_count == DATA_WIDTH[2:0] - 1'b1) begin
-                                data_bit_count <= 3'd0;
+                            if (data_bit_count == ($bits(data_bit_count))'(DATA_WIDTH - 1)) begin
+                                data_bit_count <= '0;
                                 rx_state       <= PARITY_EN ? S_PARITY_BIT : S_STOP_BIT;
                             end else begin
                                 data_bit_count <= data_bit_count + 1'd1;

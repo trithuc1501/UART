@@ -24,9 +24,9 @@ module uart_tx #(
 
     tx_state_t tx_state;
 
-    logic [3:0]            tx_sample_count; 
-    logic [3:0]            data_bit_count;  
-    logic [DATA_WIDTH-1:0] tx_shift_reg;    
+    logic [3:0]                         tx_sample_count; 
+    logic [$clog2(DATA_WIDTH) - 1:0]    data_bit_count; 
+    logic [DATA_WIDTH-1:0]              tx_shift_reg;    
 
     logic parity_bit;
 
@@ -36,7 +36,7 @@ module uart_tx #(
             o_tx_serial     <= 1'b1;  
             o_tx_busy       <= 1'b0;
             tx_sample_count <= 4'd0;
-            data_bit_count  <= 4'd0;
+            data_bit_count  <= '0;
             tx_shift_reg    <= '0;
         end else begin
 
@@ -49,7 +49,7 @@ module uart_tx #(
                     if (i_tx_start) begin
                         tx_shift_reg    <= i_data_in;
                         parity_bit <= PARITY_IS_EVEN ? (^i_data_in) : ~(^i_data_in);
-                        data_bit_count  <= 4'd0;
+                        data_bit_count  <= '0;
                         tx_sample_count <= 4'd0;
                         o_tx_serial     <= 1'b0;    
                         o_tx_busy       <= 1'b1;  
@@ -62,7 +62,7 @@ module uart_tx #(
                     if (i_baud_tick) begin
                         if (tx_sample_count == 4'd15) begin
                             tx_sample_count <= 4'd0;
-                            data_bit_count  <= 4'd0;  
+                            data_bit_count  <= '0;  
                             o_tx_serial     <= tx_shift_reg[0];
                             tx_shift_reg    <= tx_shift_reg >> 1;
                             tx_state        <= S_DATA_BITS;
