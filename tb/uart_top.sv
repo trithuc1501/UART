@@ -51,6 +51,9 @@ module top_tb;
     assign u_if.fifo_wen = DUT.fifo_wen;
     assign u_if.fifo_ren = DUT.fifo_ren;
 
+    assign u_if.fifo_w_ptr = DUT.u_fifo.w_ptr;
+    assign u_if.fifo_r_ptr = DUT.u_fifo.r_ptr;
+
     initial begin
         uvm_config_db#(virtual uart_if)::set(null, "uvm_test_top.*", "vif", u_if);
 

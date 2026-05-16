@@ -14,7 +14,8 @@ package uart_pkg;
     `include "uart_driver.sv"          
     `include "uart_monitor.sv"         
     
-    `include "uart_scoreboard.sv"      
+    `include "uart_scoreboard.sv"  
+    `include "uart_coverage_collector.sv"    
     
     `include "uart_agent.sv"           
     `include "uart_env.sv"            

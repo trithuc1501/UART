@@ -21,6 +21,8 @@ interface uart_if#(
 
     logic fifo_wen;
     logic fifo_ren;
+    logic [$clog2(FIFO_DEPTH):0] fifo_r_ptr;
+    logic [$clog2(FIFO_DEPTH):0] fifo_w_ptr;
 
     logic tx_start;
 

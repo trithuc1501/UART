@@ -28,7 +28,7 @@ class uart_scoreboard extends uvm_scoreboard;
         if (tr.framing_error_detected) begin
             framing_drop_count++;
             `uvm_info("SCB_RX",
-                $sformatf("Framing error — DUT correctly dropped the frame. data=0x%02h", tr.data),
+                $sformatf("Framing error - DUT correctly dropped the frame. data=0x%02h", tr.data),
                 UVM_MEDIUM)
             return;
         end
@@ -36,7 +36,7 @@ class uart_scoreboard extends uvm_scoreboard;
         if (tr.o_fifo_full) begin
             drop_count++;
             `uvm_info("SCB_RX",
-                $sformatf("FIFO Full — data=0x%02h dropped.", tr.data),
+                $sformatf("FIFO Full - data=0x%02h dropped.", tr.data),
                 UVM_MEDIUM)
             return;
         end
@@ -46,13 +46,12 @@ class uart_scoreboard extends uvm_scoreboard;
             ref_queue.push_back(tr.data);
             ref_perr_queue.push_back(1'b1);
             `uvm_info("SCB_RX",
-                $sformatf("Parity error — DUT received: data=0x%02h → pushed to ref_queue [perr]. Depth=%0d",
+                $sformatf("Parity error - DUT received: data=0x%02h -> pushed to ref_queue [perr]. Depth=%0d",
                           tr.data, ref_queue.size()),
                 UVM_MEDIUM)
             return;
         end
 
-        // Frame bình thường
         ref_queue.push_back(tr.data);
         ref_perr_queue.push_back(1'b0);
         `uvm_info("SCB_RX",
@@ -67,7 +66,7 @@ class uart_scoreboard extends uvm_scoreboard;
 
         if (ref_queue.size() == 0) begin
             `uvm_error("SCB_TX",
-                $sformatf("TX received 0x%02h but ref_queue is empty — DUT transmitted an extra byte.", tr.data))
+                $sformatf("TX received 0x%02h but ref_queue is empty - DUT transmitted an extra byte.", tr.data))
             mismatch_count++;
             return;
         end

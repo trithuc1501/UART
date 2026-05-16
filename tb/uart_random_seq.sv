@@ -1,18 +1,19 @@
 class uart_random_seq extends uvm_sequence #(uart_transaction);
     `uvm_object_utils(uart_random_seq)
 
+    int unsigned num_tx = 20;
+
     function new(string name = "uart_random_seq");
         super.new(name);
-    endfunction
+    endfunction 
 
     virtual task body();
         uart_transaction req;
 
-        `uvm_info("RANDOM_SEQ", "Starting random transmission sequence of 20 bytes...", UVM_LOW)
+        `uvm_info("RANDOM_SEQ", $sformatf("Starting random transmission sequence of %0d bytes...", num_tx), UVM_LOW)
 
-        repeat(20) begin
+        repeat(num_tx) begin
             req = uart_transaction::type_id::create("req");
-            
             start_item(req);
             
             if (!req.randomize()) begin

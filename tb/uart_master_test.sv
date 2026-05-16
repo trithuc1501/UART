@@ -19,11 +19,9 @@ class uart_master_test extends uvm_test;
 
         mseq = uart_master_seq::type_id::create("mseq");
 
-        mseq.sqr = env.rx_agt.sqr;
-
         `uvm_info("MASTER_TEST", "Starting uart_master_test", UVM_LOW)
 
-        mseq.start(null);
+        mseq.start(env.rx_agt.sqr);
 
         #20ms;
 

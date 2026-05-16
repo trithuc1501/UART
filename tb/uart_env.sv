@@ -1,9 +1,10 @@
 class uart_env extends uvm_env;
     `uvm_component_utils(uart_env)
 
-    uart_agent      rx_agt; 
-    uart_agent      tx_agt; 
-    uart_scoreboard scb;   
+    uart_agent              rx_agt; 
+    uart_agent              tx_agt; 
+    uart_scoreboard         scb;
+    uart_coverage_collector cov;   
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -21,6 +22,8 @@ class uart_env extends uvm_env;
         tx_agt = uart_agent::type_id::create("tx_agt", this);
         
         uvm_config_db#(bit)::set(this, "tx_agt", "is_tx_agent", 1);
+
+        cov = uart_coverage_collector::type_id::create("cov", this);
     endfunction
 
     virtual function void connect_phase(uvm_phase phase);
@@ -28,5 +31,6 @@ class uart_env extends uvm_env;
 
         rx_agt.mon.item_collected_port.connect(scb.rx_imp);
         tx_agt.mon.item_collected_port.connect(scb.tx_imp);
+        rx_agt.mon.item_collected_port.connect(cov.analysis_export);
     endfunction
 endclass
